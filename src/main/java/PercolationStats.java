@@ -5,9 +5,11 @@
  * 开发时间: 2018-01-25<br>
  */
 public class PercolationStats {
+
     // perform trials independent experiments on an n-by-n grid
     public PercolationStats(int n, int trials) {
-
+        if (n <= 0 || trials <= 0)
+            throw new IllegalArgumentException("The param is not illegal");
     }
 
     // sample mean of percolation threshold
