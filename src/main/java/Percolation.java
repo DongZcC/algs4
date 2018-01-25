@@ -2,7 +2,6 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
-import java.io.File;
 
 /**
  * 功能说明: <br>
@@ -19,6 +18,7 @@ public class Percolation {
     private boolean[] isOpen;
     boolean percolationFlag = false;
     private final int VIRTUAL;
+    private int count;
 
     public Percolation(int n) {
         this.N = n;
@@ -44,6 +44,7 @@ public class Percolation {
     public void open(int row, int col) {
         validate(row, col);
         int index = getIndex(row, col);
+        count++;
         isOpen[index] = true;
         //left
         if (col > 1) {
@@ -76,7 +77,7 @@ public class Percolation {
             }
         }
 
-        if (TOP.connected(index, VIRTUAL) && BOTTOM.connected(index, VIRTUAL)) {
+        if ((count > N) && TOP.connected(index, VIRTUAL) && BOTTOM.connected(index, VIRTUAL)) {
             percolationFlag = true;
         }
     }
@@ -104,12 +105,7 @@ public class Percolation {
     }
 
     public int numberOfOpenSites() {
-        int count = 0;
-        for (int i = 0; i < N * N; i++) {
-            if (isOpen[i])
-                count++;
-        }
-        return count;
+        return this.count;
     }
 
     public boolean percolates() {
@@ -146,7 +142,7 @@ public class Percolation {
 //    }
 
     private static void checkFromfile(String fileName) {
-        In in = new In(new File(fileName));
+        In in = new In(fileName);
         int n = in.readInt();
         Percolation p = new Percolation(n);
         while (in.hasNextLine()) {
