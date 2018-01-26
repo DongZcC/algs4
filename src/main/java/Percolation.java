@@ -23,7 +23,7 @@ public class Percolation {
 
     public Percolation(int length) {
         this.length = length;
-        if (length < 0) {
+        if (length <= 0) {
             throw new IllegalArgumentException("the argument is illegal");
         }
         isOpen = new boolean[length * length];
@@ -45,6 +45,10 @@ public class Percolation {
     public void open(int row, int col) {
         validate(row, col);
         int index = getIndex(row, col);
+        // if the site is already opened ,just return
+        if (isOpen[index]) {
+            return;
+        }
         count++;
         isOpen[index] = true;
         // left
@@ -78,7 +82,7 @@ public class Percolation {
             }
         }
 
-        if ((count > length) && topVirtualNode.connected(index, virtual) && bottomVirtualNode.connected(index, virtual)) {
+        if ((count >= length) && topVirtualNode.connected(index, virtual) && bottomVirtualNode.connected(index, virtual)) {
             percolationFlag = true;
         }
     }
