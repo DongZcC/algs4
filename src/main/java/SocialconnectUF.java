@@ -26,7 +26,7 @@ public class SocialconnectUF {
     }
 
     public String getEarliestTimestamps() {
-        //init the FindMaxUF
+        //init the Interview.week1.FindMaxUF
         WeightedQuickUnionUF uf = new WeightedQuickUnionUF(N);
         In in = new In(new File(fileName));
         while (in.hasNextLine()) {
