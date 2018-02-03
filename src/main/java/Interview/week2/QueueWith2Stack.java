@@ -21,7 +21,7 @@ public class QueueWith2Stack<T> {
 
     public T dequeue() {
         // 翻转栈
-        while (!s1.isEmpty()) {
+        while (s2.isEmpty()) {
             s2.push(s1.pop());
         }
         return s2.pop();

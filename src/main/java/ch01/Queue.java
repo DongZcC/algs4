@@ -31,7 +31,6 @@ public class Queue<T> {
 
     public void enqueue(T t) {
         //first time
-
         Node oldLast = last;
         last = new Node();
         last.item = t;
