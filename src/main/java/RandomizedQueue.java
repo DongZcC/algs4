@@ -48,6 +48,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // remove and return a random item
     public Item dequeue() {
+        if (isEmpty())
+            throw new NoSuchElementException();
         // 要求出队一个随机的值
         // 找到一个随机的下标
         int index = StdRandom.uniform(0, size);
@@ -63,6 +65,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // return a random item (but do not remove it)
     public Item sample() {
+        if (isEmpty())
+            throw new NoSuchElementException();
         return (Item) items[StdRandom.uniform(0, size)];
     }
 
@@ -102,15 +106,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     // unit testing (optional)
     public static void main(String[] args) {
         RandomizedQueue<Integer> rq = new RandomizedQueue<Integer>();
-        rq.size();
-        rq.enqueue(8);
-        rq.isEmpty();
         rq.dequeue();
-        rq.size();
-        rq.isEmpty();
-        rq.isEmpty();
-        rq.size();
-        rq.size();
-        rq.enqueue(43);
     }
 }

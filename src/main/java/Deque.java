@@ -19,7 +19,6 @@ public class Deque<Item> implements Iterable<Item> {
         Item item; //
         Node next; // 8bit
         Node previous;
-
         public Node(Item item) {
             this.item = item;
         }
