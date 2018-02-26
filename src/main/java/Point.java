@@ -141,6 +141,14 @@ public class Point implements Comparable<Point> {
      */
     public static void main(String[] args) {
         /* YOUR CODE HERE */
+        // Point p = new Point(253,408);
+        // Point q = new Point(253,408);
+        // System.out.println(p.slopeTo(q));
+
+        Point p = new Point(2, 0);
+        Point q = new Point(2, 0);
+        Point r = new Point(1, 7);
+        System.out.println(p.slopeOrder().compare(q, r));
     }
 }
 
