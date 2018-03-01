@@ -24,7 +24,6 @@ public class Solver {
         MinPQ<SearchNode> twinMinPQ = new MinPQ<>();
         currentNode = new SearchNode(initial, null);
         solution = new LinkedList<>();
-        solution.addLast(initial);
         boardMinPQ.insert(currentNode);
         SearchNode currentTwin = new SearchNode(currentNode.board.twin(), null);
         twinMinPQ.insert(currentTwin);
@@ -99,8 +98,8 @@ public class Solver {
     public Iterable<Board> solution() {
         if (isSolvable()) {
             SearchNode node = currentNode;
-            while (node.preSearchNode != null) {
-                solution.addLast(node.board);
+            while (node != null) {
+                solution.addFirst(node.board);
                 node = node.preSearchNode;
             }
             return solution;
