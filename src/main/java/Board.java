@@ -105,9 +105,14 @@ public class Board {
     }
 
     // does this board equal y?
+    // * reflexive 自反
+    // * symmetric 对称
+    // * transitive 传递
+    // * argument is null
     public boolean equals(Object y) {
         if (y == null)
             return false;
+        // 自反
         if (y == this)
             return true;
 
@@ -121,6 +126,8 @@ public class Board {
                         return false;
                 }
             }
+        } else {
+            return false;
         }
         return true;
     }

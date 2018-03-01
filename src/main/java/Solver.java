@@ -2,9 +2,8 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.LinkedList;
-import java.util.Stack;
 
 /**
  * 功能说明: <br>
@@ -13,10 +12,7 @@ import java.util.Stack;
  * 开发时间: 2018-02-28<br>
  */
 public class Solver {
-
-    private int moves;
     private SearchNode currentNode;
-    private SearchNode currentTwin;
     private LinkedList<Board> solution;
 
     // find a solution to the initial board (using the A* algorithm)
@@ -28,16 +24,16 @@ public class Solver {
         MinPQ<SearchNode> twinMinPQ = new MinPQ<>();
         currentNode = new SearchNode(initial, null);
         solution = new LinkedList<>();
+        solution.addLast(initial);
         boardMinPQ.insert(currentNode);
-        currentTwin = new SearchNode(currentNode.board.twin(), null);
+        SearchNode currentTwin = new SearchNode(currentNode.board.twin(), null);
         twinMinPQ.insert(currentTwin);
         while (true) {
             currentNode = boardMinPQ.delMin();
-            solution.addLast(currentNode.board);
+            // 当前入栈移动数，和上次入栈相同时，移除上次无效操作
             // 如果当前节点已经是目标解法
             if (currentNode.board.isGoal())
                 break;
-            moves++;
             // 如果不是，就把所有邻居节点都放入优先级队列中
             putNeighborIntoQueue(currentNode, boardMinPQ);
 
@@ -78,6 +74,11 @@ public class Solver {
 
         @Override
         public int compareTo(SearchNode o) {
+            // 首先比较优先级
+            // 优先级都相同应该比较 move的值, move的值越大，优先级越高
+            if (Integer.compare(this.priority, o.priority) == 0) {
+                return Integer.compare(o.preSearchNode.move, this.preSearchNode.move);
+            }
             return Integer.compare(this.priority, o.priority);
         }
     }
@@ -90,13 +91,18 @@ public class Solver {
     // min number of moves to solve initial board; -1 if unsolvable
     public int moves() {
         if (isSolvable())
-            return moves;
+            return currentNode.move;
         return -1;
     }
 
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
         if (isSolvable()) {
+            SearchNode node = currentNode;
+            while (node.preSearchNode != null) {
+                solution.addLast(node.board);
+                node = node.preSearchNode;
+            }
             return solution;
         }
         return null;
@@ -124,6 +130,7 @@ public class Solver {
             for (Board board : solver.solution())
                 StdOut.println(board);
         }
+        System.out.println(solver.solution.size());
     }
 }
 
