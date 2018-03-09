@@ -247,7 +247,7 @@ public class KdTree {
     public Point2D nearest(Point2D p) {
         if (p == null)
             throw new IllegalArgumentException("called nearest with null val");
-        return findNearest(root, p);
+        return findNearest2(root, p, root.key);
     }
 
     private Point2D findNearest(Node x, Point2D key) {
@@ -265,6 +265,30 @@ public class KdTree {
                 nearest = rightTmp;
         }
         return nearest;
+    }
+
+    private Point2D findNearest2(Node x, Point2D key, Point2D currNearPoint) {
+        if (x.key.equals(key))
+            return x.key;
+        double currDistance = currNearPoint.distanceTo(key);
+        if (Double.compare(x.val.distanceTo(key), currDistance) >= 0)
+            return currNearPoint;
+        else {
+            double distance = x.key.distanceTo(key);
+            if (Double.compare(distance, currDistance) < 0) {
+                currNearPoint = x.key;
+                currDistance = distance;
+            }
+
+            if (x.left != null) {
+                currNearPoint = findNearest2(x.left, key, currNearPoint);
+            }
+
+            if (x.right != null) {
+                currNearPoint = findNearest2(x.right, key, currNearPoint);
+            }
+        }
+        return currNearPoint;
     }
 
     // unit testing of the methods (optional)
