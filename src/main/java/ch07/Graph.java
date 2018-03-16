@@ -41,7 +41,7 @@ public class Graph {
 
     // number of vertices
     int V() {
-        return 0;
+        return V;
     }
 
     // number of edges
