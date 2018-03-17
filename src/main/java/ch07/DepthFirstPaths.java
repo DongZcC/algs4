@@ -20,7 +20,6 @@ public class DepthFirstPaths {
         marked = new boolean[G.V()];
         edgTo = new int[G.V()];
         this.s = s;
-
         dfs(G, s);
     }
 
