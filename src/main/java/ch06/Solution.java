@@ -1,5 +1,6 @@
 package ch06;
 
+import edu.princeton.cs.algs4.BST;
 import org.apache.commons.lang3.StringUtils;
 import sun.reflect.generics.tree.Tree;
 
@@ -361,43 +362,92 @@ public class Solution {
 
 
     //203
-    public ListNode removeElements(ListNode head, int val) {
-        if (head == null)
-            return null;
-        ListNode dummy = new ListNode(0);
-        dummy.next = head;
-        ListNode pre = dummy, curr = head;
-        while (curr != null) {
-            if (curr.val == val) {
-                pre.next = curr.next;
-            } else {
-                pre = pre.next;
-            }
-            curr = curr.next;
+//    public ListNode removeElements(ListNode head, int val) {
+//        if (head == null)
+//            return null;
+//        ListNode dummy = new ListNode(0);
+//        dummy.next = head;
+//        ListNode pre = dummy, curr = head;
+//        while (curr != null) {
+//            if (curr.val == val) {
+//                pre.next = curr.next;
+//            } else {
+//                pre = pre.next;
+//            }
+//            curr = curr.next;
+//
+//        }
+//        return dummy.next;
+//    }
 
+
+
+
+
+    public boolean findTarget(TreeNode root, int k) {
+        if (root == null) return false;
+        // 最简单的方式，就是中序遍历一遍树的节点,这个时候就是有序的了。
+        ArrayList<Integer> list = new ArrayList<>();
+        inOrder(root, list);
+        // 然后再用有序集合的那套东西来搞
+        int left = 0, right = list.size() - 1;
+        while(left < right) {
+            int sum = list.get(left) + list.get(right);
+            if (sum == k)
+                return true;
+            else if (sum < k)
+                left = binarySearchSmall(list, left, right, k - list.get(left));
+            else
+                right = binarySearchHigh(list, left, right,k - list.get(right));
         }
-        return dummy.next;
+        return false;
     }
 
-    public static void main(String[] args) {
-        ListNode t1 = new ListNode(1);
-        ListNode t2 = new ListNode(2);
-        ListNode t7 = new ListNode(6);
-        ListNode t3 = new ListNode(3);
-        ListNode t4 = new ListNode(4);
-        ListNode t5 = new ListNode(5);
-        ListNode t6 = new ListNode(6);
-        t1.next = t2;
-        t2.next = t7;
-        t7.next = t3;
-        t3.next = t4;
-        t4.next = t5;
-        t5.next = t6;
-        Solution solution = new Solution();
-        ListNode t = solution.removeElements(t1, 6);
-        while (t != null) {
-            System.out.println(t.val);
-            t = t.next;
+    private void inOrder(TreeNode root, ArrayList<Integer> list) {
+        if (root == null)
+            return ;
+        inOrder(root.left, list);
+        list.add(root.val);
+        inOrder(root.right, list);
+    }
+
+    private Integer binarySearchSmall(ArrayList<Integer>  arr,int start, int end,int key) {
+        int lo = start;
+        int hi = end;
+        while (lo <= hi) {
+            int mid = lo + (hi - lo) / 2;
+            if (arr.get(mid) > key)
+                hi = mid - 1;
+            else if (arr.get(mid) < key)
+                lo = mid + 1;
+            else
+                return mid;
         }
+        return lo;
+    }
+
+    private Integer binarySearchHigh(ArrayList<Integer>  arr,int start, int end,int key) {
+        int lo = start;
+        int hi = end;
+        while (lo <= hi) {
+            int mid = lo + (hi - lo) / 2;
+            if (arr.get(mid) > key)
+                hi = mid - 1;
+            else if (arr.get(mid) < key)
+                lo = mid + 1;
+            else
+                return mid;
+        }
+        return hi;
+    }
+    public static void main(String[] args) {
+
+        TreeNode t2 = new TreeNode(2);
+        TreeNode t1 = new TreeNode(1);
+        TreeNode t3 = new TreeNode(3);
+        t2.left = t1;
+        t2.right = t3;
+        Solution s = new Solution();
+        s.findTarget(t2, 3);
     }
 }
