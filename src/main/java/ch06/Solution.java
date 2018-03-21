@@ -379,25 +379,164 @@ public class Solution {
         return dummy.next;
     }
 
-    public static void main(String[] args) {
-        ListNode t1 = new ListNode(1);
-        ListNode t2 = new ListNode(2);
-        ListNode t7 = new ListNode(6);
-        ListNode t3 = new ListNode(3);
-        ListNode t4 = new ListNode(4);
-        ListNode t5 = new ListNode(5);
-        ListNode t6 = new ListNode(6);
-        t1.next = t2;
-        t2.next = t7;
-        t7.next = t3;
-        t3.next = t4;
-        t4.next = t5;
-        t5.next = t6;
-        Solution solution = new Solution();
-        ListNode t = solution.removeElements(t1, 6);
-        while (t != null) {
-            System.out.println(t.val);
-            t = t.next;
+
+    // 66
+    public int[] plusOne(int[] digits) {
+        int length = digits.length;
+        for (int i = length - 1; i >= 0; i--) {
+            if (digits[i] < 9) {
+                digits[i]++;
+                return digits;
+            }
+            digits[i] = 0;
         }
+
+        int[] result = new int[length + 1];
+        result[0] = 1;
+        System.arraycopy(digits, 0, result, 1, length);
+        return result;
+    }
+
+    public int maxProfit2(int[] prices) {
+        int[] temp = new int[prices.length - 1];
+        // 先一次循环，找到差值
+        for (int i = 1; i < prices.length; i++) {
+            temp[i - 1] = prices[i] - prices[i - 1];
+        }
+        // 循环临时数组，只要数组值大于 0
+        int reuslt = 0;
+        for (Integer e : temp) {
+            if (e > 0)
+                reuslt += e;
+        }
+        return reuslt;
+    }
+
+    public int lengthOfLongestSubstring(String s) {
+        int maxLength = 0, count = 0;
+        // 保存去重数据
+        ArrayList<String> set = new ArrayList<>();
+
+        String[] temp = s.split("");
+        int lo = 0, hi = temp.length - 1;
+        while (lo <= hi) {
+            if (!set.contains(temp[lo])) {
+                set.add(temp[lo]);
+                lo++;
+                count++;
+            } else {
+                maxLength = Math.max(maxLength, count);
+                count = set.size() - set.indexOf(temp[lo]) - 1;
+                for (int i = set.indexOf(temp[lo]); i >= 0; i--)
+                    set.remove(i);
+            }
+        }
+        if (count != 0) {
+            maxLength = Math.max(maxLength, count);
+        }
+        return maxLength;
+    }
+
+
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int length = nums1.length + nums2.length;
+        int[] arr = new int[nums1.length + nums2.length];
+        int i1 = 0, j1 = nums1.length, i2 = 0, j2 = nums2.length;
+        for (int k = 0; k < length; k++) {
+            if (i1 == j1)
+                arr[k] = nums2[i2++];
+            else if (i2 == j2)
+                arr[k] = nums1[i1++];
+            else if (nums1[i1] < nums2[i2]) {
+                arr[k] = nums1[i1++];
+            } else {
+                arr[k] = nums2[i2++];
+            }
+        }
+
+        // 奇数
+        if (arr.length % 2 == 1) {
+            return (double) arr[length / 2];
+        } else {
+            return (double) (arr[length / 2] + arr[length / 2 - 1]) / 2;
+        }
+    }
+
+
+    boolean[][] dp;
+
+    public String longestPalindrome(String s) {
+        dp = new boolean[s.length()][s.length()];
+        int i, j;
+        for (i = 0; i < s.length(); i++) {
+            for (j = 0; j < s.length(); j++) {
+                if (i >= j) {
+                    dp[i][j] = true; //当i == j 的时候，只有一个字符的字符串; 当 i > j 认为是空串，也是回文
+
+                } else {
+                    dp[i][j] = false; //其他情况都初始化成不是回文
+                }
+            }
+        }
+        int k;
+        int maxLen = 1;
+        int rf = 0, rt = 0;
+        for (k = 1; k < s.length(); k++) {
+            for (i = 0; k + i < s.length(); i++) {
+                j = i + k;
+                //对字符串 s[i....j] 如果 s[i] != s[j] 那么不是回文
+                if (s.charAt(i) != s.charAt(j)) {
+                    dp[i][j] = false;
+                } else {
+                    //如果s[i] == s[j] 回文性质由 s[i+1][j-1] 决定
+                    dp[i][j] = dp[i + 1][j - 1];
+                    if (dp[i][j]) {
+                        if (k + 1 > maxLen) {
+                            maxLen = k + 1;
+                            rf = i;
+                            rt = j;
+                        }
+                    }
+                }
+            }
+        }
+        return s.substring(rf, rt + 1);
+    }
+
+
+    public String convert(String s, int numRows) {
+        int len = s.length();
+        StringBuffer[] sb = new StringBuffer[numRows];
+        for (int i = 0; i < sb.length; i++) sb[i] = new StringBuffer();
+        int i = 0;
+        while (i < len) {
+            for (int idx = 0; idx < numRows && i < len; idx++) // vertically down
+                sb[idx].append(s.charAt(i++));
+            for (int idx = numRows - 2; idx >= 1 && i < len; idx--) // obliquely up
+                sb[idx].append(s.charAt(i++));
+        }
+        return "";
+    }
+
+
+    public int reverse(int x) {
+        int result = 0;
+        while (x != 0) {
+            int tail = x % 10;
+            int newResult = result * 10 + tail;
+            if ((newResult - tail) / 10 != result)
+                return 0;
+            x = x / 10;
+            result = newResult;
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Solution s = new Solution();
+        String sw = "PAYPALISHIRING";
+        s.convert(sw, 3);
+        s.reverse(123);
+        TreeSet<Integer> set = new TreeSet<>();
     }
 }
