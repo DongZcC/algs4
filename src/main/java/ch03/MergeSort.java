@@ -41,7 +41,6 @@ public class MergeSort {
         Integer[] arr = new Integer[]{5, 8, 9, 3, 2, 10};
         Integer[] aux = new Integer[arr.length];
         MergeSort.sort(arr, aux, 0, arr.length - 1);
-        String s = "1";
         for (Integer integer : arr) {
             System.out.println(integer);
         }
