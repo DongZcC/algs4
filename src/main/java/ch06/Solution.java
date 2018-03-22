@@ -532,11 +532,43 @@ public class Solution {
         return result;
     }
 
+    //  8
+    public int myAtoi(String str) {
+        if (str == null || "".equals(str.trim()))
+            return 0;
+        int sign = 1, base = 0, index = 0;
+        // 前导空格删除
+        while (str.charAt(index) == ' ')
+            index++;
+        // 判断符号位
+        if (str.charAt(index) == '-' || str.charAt(index) == '+') {
+            sign = str.charAt(index++)  == '-' ? -1 : 1;
+        }
+
+        // 开始搞数字了, 不是数字的全部排出
+        while (str.charAt(index) >= '0' && str.charAt(index) <= '9') {
+            // 判断是否溢出
+            if (base > Integer.MAX_VALUE / 10 || base == Integer.MAX_VALUE / 10 && str.charAt(index) > '7') {
+                if (sign == 1)
+                    return Integer.MAX_VALUE;
+                else
+                    return Integer.MIN_VALUE;
+            }
+            base = base * 10 + str.charAt(index++) - '0';
+        }
+        return base * sign;
+    }
+
+
+
+
     public static void main(String[] args) {
         Solution s = new Solution();
-        String sw = "PAYPALISHIRING";
-        s.convert(sw, 3);
-        s.reverse(123);
-        TreeSet<Integer> set = new TreeSet<>();
+        String x = "1";
+        s.myAtoi(x);
+        char z = 'A';
+        // 97
+        System.out.println((int) z);
+        s.myAtoi(x);
     }
 }
