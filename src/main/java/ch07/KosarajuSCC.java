@@ -1,6 +1,5 @@
 package ch07;
 
-import edu.princeton.cs.algs4.Bag;
 
 /**
  * 功能说明: 计算强连通分量的 Kosaraju 算法<br>
