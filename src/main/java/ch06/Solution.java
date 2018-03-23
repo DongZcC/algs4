@@ -560,6 +560,41 @@ public class Solution {
     }
 
 
+    public int romanToInt(String s) {
+
+        int sum = 0;
+        if (s.contains("IV"))
+            sum -= 2;
+        if (s.contains("IX"))
+            sum -= 2;
+        if (s.contains("XL"))
+            sum -= 20;
+        if (s.contains("XC"))
+            sum -= 20;
+        if (s.contains("CD"))
+            sum -= 200;
+        if (s.contains("CM"))
+            sum -= 200;
+
+        Map<Character, Integer> map = new HashMap<Character, Integer>() {
+            {
+                put('I', 1);
+                put('V', 5);
+                put('X', 10);
+                put('L', 50);
+                put('C', 100);
+                put('D', 500);
+                put('M', 1000);
+            }
+        };
+
+
+        for (int i = 0; i < s.length(); i++) {
+            sum += map.get(s.charAt(i));
+        }
+
+        return sum;
+    }
 
 
     public static void main(String[] args) {

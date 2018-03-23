@@ -5,7 +5,7 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
 /**
- * 功能说明: <br>
+ * 功能说明: 判断两点是否连通<br>
  * 系统版本: v1.0<br>
  * 开发人员: @author dongzc15247<br>
  * 开发时间: 2018-03-22<br>
