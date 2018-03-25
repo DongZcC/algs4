@@ -596,14 +596,40 @@ public class Solution {
         return sum;
     }
 
+    public String longestCommonPrefix(String[] strs) {
+        String result = "";
+        if (strs == null || strs.length == 0)
+            return "";
+
+        if (strs.length == 1)
+            return strs[0];
+
+        // 找到数组中长度最短的那个
+        String minLength = strs[0];
+        for (int i = 1; i < strs.length; i++) {
+            if (strs[i].length() < minLength.length())
+                minLength = strs[i];
+        }
+
+        result = minLength;
+        while (!"".equals(result)) {
+            boolean flag = true;
+            for (String str : strs) {
+                if (!str.startsWith(result)) {
+                    result = result.substring(0, result.length() -1 );
+                    flag = false;
+                    break;
+                }
+            }
+
+            if (flag)
+                return result;
+        }
+        return result;
+    }
 
     public static void main(String[] args) {
         Solution s = new Solution();
-        String x = "1";
-        s.myAtoi(x);
-        char z = 'A';
-        // 97
-        System.out.println((int) z);
-        s.myAtoi(x);
+        s.longestCommonPrefix(new String[] {"flower","flow","flight"});
     }
 }
