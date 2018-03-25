@@ -1,8 +1,8 @@
-import edu.princeton.cs.algs4.*;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.ListIterator;
+import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdIn;
 
 /**
  * 功能说明: part 2  week 1<br>
@@ -12,7 +12,6 @@ import java.util.ListIterator;
  */
 public class SAP {
 
-    private final static int ORIGIN = 0;
     private final Digraph dg;
 
     // constructor takes a digraph (not necessarily a DAG)
@@ -24,12 +23,6 @@ public class SAP {
 
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
-        // int ancestor = ancestor(v, w);
-        // if (ancestor != -1) {
-        //     BreadthFirstDirectedPaths p = new BreadthFirstDirectedPaths(dg.reverse(), ancestor);
-        //     return p.distTo(v) + p.distTo(w);
-        // }
-        // return -1;
         return findShortest(v, w)[0];
     }
 
@@ -40,23 +33,6 @@ public class SAP {
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
-        // BreadthFirstDirectedPaths paths = new BreadthFirstDirectedPaths(dg.reverse(), 0);
-        // if (paths.hasPathTo(v) && paths.hasPathTo(w)) {
-        //     HashSet<Integer> set = new HashSet<>();
-        //     for (int i : paths.pathTo(v)) {
-        //         set.add(i);
-        //     }
-        //
-        //     ArrayList<Integer> list = new ArrayList<>();
-        //     for (Integer i : paths.pathTo(w)) {
-        //         list.add(i);
-        //     }
-        //
-        //     for (int i = list.size() - 1; i >= 0; i--)
-        //         if (set.contains(list.get(i)))
-        //             return list.get(i);
-        // }
-        // return -1;
         return findShortest(v, w)[1];
     }
 
@@ -77,40 +53,44 @@ public class SAP {
         int[] result = new int[]{-1, -1};
         BreadthFirstDirectedPaths bfdv = new BreadthFirstDirectedPaths(dg, v);
         BreadthFirstDirectedPaths bfdw = new BreadthFirstDirectedPaths(dg, w);
-        try {
-            for (int i : bfdv.pathTo(ORIGIN)) {
-                for (int j : bfdw.pathTo(ORIGIN)) {
-                    // 有交点
-                    if (i == j) {
-                        int dis = bfdv.distTo(i) + bfdw.distTo(j);
-                        result[0] = dis;
-                        result[1] = i;
-                        return result;
-                    }
-                }
+        int distance = Integer.MAX_VALUE;
+        int ancestor = -1;
+        for (int i = 0; i < dg.V(); i++) {
+            if (bfdv.hasPathTo(i) && bfdw.hasPathTo(i) &&
+                    distance > (bfdv.distTo(i) + bfdw.distTo(i))) {
+                distance = bfdv.distTo(i) + bfdw.distTo(i);
+                ancestor = i;
             }
-        } catch (NullPointerException e) {
+        }
 
+        if (ancestor != -1) {
+            result[0] = distance;
+            result[1] = ancestor;
         }
         return result;
     }
 
     private int[] findShortest(Iterable<Integer> v, Iterable<Integer> w) {
+        for (int i : v)
+            for (int j : w)
+                validatePoints(i, j);
+
         int[] result = new int[]{-1, -1};
-        int shortestLength = Integer.MAX_VALUE;
-        int shortestAncestor = -1;
-        for (int i : v) {
-            for (int j : w) {
-                int length = findShortest(v, w)[0];
-                if (length != -1 && length < shortestLength) {
-                    shortestLength = length;
-                    shortestAncestor = i;
-                }
+        BreadthFirstDirectedPaths bfdv = new BreadthFirstDirectedPaths(dg, v);
+        BreadthFirstDirectedPaths bfdw = new BreadthFirstDirectedPaths(dg, w);
+        int distance = Integer.MAX_VALUE;
+        int ancestor = -1;
+        for (int i = 0; i < dg.V(); i++) {
+            if (bfdv.hasPathTo(i) && bfdw.hasPathTo(i) &&
+                    distance > (bfdv.distTo(i) + bfdw.distTo(i))) {
+                distance = bfdv.distTo(i) + bfdw.distTo(i);
+                ancestor = i;
             }
         }
-        if (shortestAncestor != -1) {
-            result[0] = shortestLength;
-            result[1] = shortestAncestor;
+
+        if (ancestor != -1) {
+            result[0] = distance;
+            result[1] = ancestor;
         }
         return result;
     }
