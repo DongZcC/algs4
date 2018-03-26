@@ -60,7 +60,7 @@ public class LazyPrimMST {
         In in = new In(args[0]);
         EdgeWeightedGraph G = new EdgeWeightedGraph(in);
 
-        LazyPrimMST mst = new LazyPrimMST(G);
+        KruskalMST mst = new KruskalMST(G);
         for (Edge e : mst.edges()) {
             StdOut.println(e);
         }

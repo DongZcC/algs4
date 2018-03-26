@@ -19,7 +19,7 @@ public class KruskalMST implements MST {
         for (Edge e : G.edges())
             minPQ.insert(e);
         UF uf = new UF(G.V());
-        while (minPQ.isEmpty() && mst.size() == G.V() - 1) {
+        while (!minPQ.isEmpty() && mst.size() != G.V() - 1) {
             Edge e = minPQ.delMin();
             int v = e.either(), w = e.other(v);
             if (!uf.connected(v, w)) {
