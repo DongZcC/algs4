@@ -4,8 +4,6 @@ import edu.princeton.cs.algs4.StdRandom;
 
 import java.util.Iterator;
 
-import static ch02.SortUtil.*;
-
 /**
  * 功能说明: <br>
  * 系统版本: v1.0<br>

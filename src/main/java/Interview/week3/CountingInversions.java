@@ -1,6 +1,6 @@
 package Interview.week3;
 
-import static ch02.SortUtil.less;
+import static week02.SortUtil.less;
 
 /**
  * 功能说明: 计数反演<br>

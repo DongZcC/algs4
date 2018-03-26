@@ -1,6 +1,6 @@
 package Interview.week2;
 
-import ch02.ShellSort;
+import week02.ShellSort;
 
 /**
  * 功能说明: <br>

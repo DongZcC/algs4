@@ -1,6 +1,6 @@
 package Interview.week3;
 
-import static ch02.SortUtil.*;
+import static week02.SortUtil.*;
 
 /**
  * 功能说明: 合并两个数组 用一个小的辅助数组<br>
