@@ -539,7 +539,7 @@ public class Solution {
             index++;
         // 判断符号位
         if (str.charAt(index) == '-' || str.charAt(index) == '+') {
-            sign = str.charAt(index++)  == '-' ? -1 : 1;
+            sign = str.charAt(index++) == '-' ? -1 : 1;
         }
 
         // 开始搞数字了, 不是数字的全部排出
@@ -613,7 +613,7 @@ public class Solution {
             boolean flag = true;
             for (String str : strs) {
                 if (!str.startsWith(result)) {
-                    result = result.substring(0, result.length() -1 );
+                    result = result.substring(0, result.length() - 1);
                     flag = false;
                     break;
                 }
@@ -625,8 +625,57 @@ public class Solution {
         return result;
     }
 
+
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        List<List<Integer>> resultList = new ArrayList<>();
+        // 数组排序先
+        // [-2, -1, 0, 0, 1, 2]
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length - 3; i++) {
+            if (i == 0 || i > 0 && nums[i] != nums[i - 1]) {
+                for (int j = i + 1; j < nums.length - 2; j++) {
+                    if (j == 1 || nums[j] != nums[j - 1]) {
+                        int t = target - nums[i] - nums[j];
+                        int lo = j + 1, hi = nums.length - 1;
+                        while (lo < hi) {
+                            int sum = nums[lo] + nums[hi];
+                            if (sum < t)
+                                lo++;
+                            else if (sum > t)
+                                hi--;
+                            else {
+                                resultList.add(Arrays.asList(nums[i], nums[j], nums[lo], nums[hi]));
+                                while (lo < hi && nums[lo] == nums[++lo]) ;
+                                while (lo < hi && nums[hi] == nums[--hi]) ;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return resultList;
+    }
+
+
+    public boolean isValid(String s) {
+        Stack<Character> stack = new Stack<>();
+        for (Character c : s.toCharArray()) {
+            if (c == '(')
+                stack.push(')');
+            else if (c == '[')
+                stack.push(']');
+            else if (stack.isEmpty() || stack.pop() != c)
+                return false;
+        }
+        return stack.isEmpty();
+    }
+
     public static void main(String[] args) {
         Solution s = new Solution();
-        s.longestCommonPrefix(new String[] {"flower","flow","flight"});
+        s.fourSum(new int[]{-1, 0, 1, 2, -1, -4}, -1);
+        s.longestCommonPrefix(new String[]{"flower", "flow", "flight"});
+        System.out.println(s.isValid("()[]{}"));
+        // System.out.println('[' - ']');
     }
 }
