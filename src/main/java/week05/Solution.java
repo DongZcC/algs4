@@ -671,11 +671,255 @@ public class Solution {
         return stack.isEmpty();
     }
 
+
+    // public List<String> generateParenthesis(int n) {
+    //     List<String> result = new ArrayList<>();
+    //     generateAllCharacters(new char[n * 2], 0, result);
+    //     return result;
+    // }
+    private void generateAllCharacters(char[] current, int pos, List<String> result) {
+        if (current.length == pos) {
+            if (valid(current))
+                result.add(new String(current));
+        } else {
+            current[pos] = '(';
+            generateAllCharacters(current, pos + 1, result);
+            current[pos] = ')';
+            generateAllCharacters(current, pos + 1, result);
+        }
+    }
+
+    private boolean valid(char[] current) {
+        int balance = 0;
+        for (int i = 0; i < current.length; i++) {
+            if (current[i] == '(')
+                balance++;
+            else
+                balance--;
+
+            if (balance < 0)
+                return false;
+        }
+        return balance == 0;
+    }
+
+
+    public List<String> generateParenthesis(int n) {
+        List<String> ans = new ArrayList();
+        backtrack(ans, "", 0, 0, n);
+        return ans;
+    }
+
+    public void backtrack(List<String> ans, String cur, int open, int close, int max) {
+        if (cur.length() == max * 2) {
+            ans.add(cur);
+        }
+
+        if (open < max)
+            backtrack(ans, cur + "(", open + 1, close, max);
+        if (close < open)
+            backtrack(ans, cur + ")", open, close + 1, max);
+    }
+
+    /**
+     * 太难理解了
+     *
+     * @param n
+     * @return
+     */
+    public List<String> generateParenthesis3(int n) {
+        List<String> ans = new ArrayList();
+        if (n == 0) {
+            ans.add("");
+        } else {
+            for (int c = 0; c < n; ++c)
+                for (String left : generateParenthesis3(c))
+                    for (String right : generateParenthesis3(n - 1 - c))
+                        ans.add("(" + left + ")" + right);
+        }
+        return ans;
+    }
+
+
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode dummy = new ListNode(0);
+        ListNode curr = dummy;
+        while (l1 != null || l2 != null) {
+            if (l1 == null) {
+                curr.next = l2;
+                l2 = l2.next;
+            } else if (l2 == null) {
+                curr.next = l1;
+                l1 = l1.next;
+            } else if (less(l1, l2)) {
+                curr.next = l1;
+                l1 = l1.next;
+            } else {
+                curr.next = l2;
+                l2 = l2.next;
+            }
+            curr = curr.next;
+        }
+        return dummy.next;
+    }
+
+    private boolean less(ListNode l1, ListNode l2) {
+        if (l1.val <= l2.val)
+            return true;
+        else
+            return false;
+    }
+
+
+    public ListNode mergeKLists(ListNode[] lists) {
+        ListNode dummy = new ListNode(0);
+        ListNode head = dummy;
+        PriorityQueue<Integer> queue = new PriorityQueue<>();
+        for (ListNode node : lists) {
+            while (node != null) {
+                queue.add(node.val);
+                node = node.next;
+            }
+        }
+
+        while (!queue.isEmpty()) {
+            head.next = new ListNode(queue.poll());
+            head = head.next;
+        }
+        return dummy.next;
+    }
+
+
+    public ListNode mergeKLists2(ListNode[] lists) {
+        if (lists == null || lists.length == 0)
+            return null;
+        ListNode dummy = new ListNode(0);
+        ListNode head = dummy;
+        // 代表lists中有几个可用的
+        int k = lists.length;
+        while (k > 0) {
+            // 循环list 中找到一个最小的node值,和下标
+            ListNode minNode = new ListNode(Integer.MAX_VALUE);
+            int minIndex = 0;
+            for (int i = 0; i < lists.length; i++) {
+                if (lists[i] != null && lists[i].val < minNode.val) {
+                    minNode = lists[i];
+                    minIndex = i;
+                }
+            }
+            // already exhausted
+            if (minNode.next == null) {
+                k--;
+            }
+            // next
+            if (lists[minIndex] != null) {
+                lists[minIndex] = lists[minIndex].next;
+                // add to the result linkedlist
+                head.next = minNode;
+                head = head.next;
+            }
+
+        }
+        return dummy.next;
+    }
+
+
+    public ListNode mergeKLists3(ListNode[] lists) {
+        if (lists == null || lists.length == 0)
+            return null;
+        ListNode dummy = new ListNode(0);
+        ListNode head = dummy;
+        Queue<ListNode> queue = new PriorityQueue<>(new ListNodeComparator());
+        for (ListNode node : lists) {
+            while (node != null) {
+                ListNode n = node;
+                n.next = null;
+                queue.add(n);
+                node = node.next;
+            }
+
+        }
+
+        while (!queue.isEmpty()) {
+            head.next = queue.poll();
+            head = head.next;
+        }
+
+        return dummy.next;
+    }
+
+    private class ListNodeComparator implements Comparator<ListNode> {
+        @Override
+        public int compare(ListNode o1, ListNode o2) {
+            return Integer.compare(o1.val, o2.val);
+        }
+    }
+
+
+    public ListNode mergeKLists4(ListNode[] lists) {
+        int k = lists.length;
+        int interval = 1;
+        while (interval < k) {
+            for (int i = 0; i < k - interval; i += interval * 2) {
+                lists[i] = mergeTwoLists(lists[i], lists[i + interval]);
+            }
+            interval *= 2;
+        }
+        if (k > 0)
+            return lists[0];
+        else
+            return null;
+    }
+
+    public ListNode mergeKList5(ListNode[] lists) {
+        if (lists == null || lists.length == 0)
+            return null;
+        return sort(lists, 0, lists.length - 1);
+    }
+
+    private ListNode sort(ListNode[] lists, int lo, int hi) {
+        if (lo >= hi)
+            return lists[lo];
+        int mid = lo + (hi - lo) / 2;
+        ListNode left = sort(lists, lo, mid);
+        ListNode right = sort(lists, mid + 1, hi);
+        return mergeTwoLists(left, right);
+    }
+
+
+    public ListNode mergeKList6(ListNode[] lists) {
+        if (lists == null || lists.length == 0)
+            return null;
+        int N = lists.length;
+        for (int sz = 1; sz < N; sz += sz) {
+            for (int lo = 0; lo < N - sz; lo += sz + sz) {
+                lists[lo] = mergeTwoLists(lists[lo], lists[lo + sz]);
+            }
+        }
+        if (N > 0)
+            return lists[0];
+        else
+            return null;
+    }
+
+
     public static void main(String[] args) {
         Solution s = new Solution();
         s.fourSum(new int[]{-1, 0, 1, 2, -1, -4}, -1);
         s.longestCommonPrefix(new String[]{"flower", "flow", "flight"});
-        System.out.println(s.isValid("()[]{}"));
+        s.generateParenthesis3(3);
+        ListNode l1 = new ListNode(-2);
+        ListNode l2 = new ListNode(-1);
+        ListNode l3 = new ListNode(-1);
+        ListNode l4 = new ListNode(-1);
+        // l1.next = l2;
+        // l2.next = l3;
+        // l3.next = l4;
+
+        ListNode[] lists = new ListNode[]{null, l2};
+
+        s.mergeKList6(lists);
+        // System.out.println(s.isValid("()[]{}"));
         // System.out.println('[' - ']');
     }
 }
