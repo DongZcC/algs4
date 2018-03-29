@@ -16,4 +16,10 @@ public class SortUtil {
         a[i] = a[j];
         a[j] = tmp;
     }
+
+
+    public static boolean less(Comparable[] a, int i, int j) {
+        return a[i].compareTo(a[j]) < 0;
+    }
+
 }
