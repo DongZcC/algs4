@@ -558,7 +558,6 @@ public class Solution {
 
 
     public int romanToInt(String s) {
-
         int sum = 0;
         if (s.contains("IV"))
             sum -= 2;
@@ -903,22 +902,72 @@ public class Solution {
     }
 
 
+    public ListNode swapPairs(ListNode head) {
+        if (head == null)
+            return null;
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode pre = head, prepre = dummy;
+        ListNode curr = head.next;
+        int index = 1;
+        while (curr != null) {
+            if (++index % 2 == 0) {
+                ListNode next = curr.next;
+                curr.next = pre;
+                pre.next = next;
+                prepre.next = curr;
+
+                // next ;
+                prepre = curr;
+                curr = next;
+            } else {
+                pre = pre.next;
+                curr = curr.next;
+                prepre = prepre.next;
+            }
+
+        }
+        return dummy.next;
+    }
+
+
+    public ListNode swapPairs2(ListNode head) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode pre = dummy;
+        // 0->1->2->3  ===>  0->2->1->3
+        while (pre.next != null && pre.next.next != null) {
+            ListNode next = pre.next.next.next; // 3
+            ListNode tmp = pre.next.next;  // 2
+            tmp.next = pre.next; // 2->1
+            pre.next.next = next; // 1->3
+            pre.next = tmp; // 0->2
+            pre = tmp.next; // pre->1
+        }
+        return dummy.next;
+    }
+
     public static void main(String[] args) {
         Solution s = new Solution();
         s.fourSum(new int[]{-1, 0, 1, 2, -1, -4}, -1);
         s.longestCommonPrefix(new String[]{"flower", "flow", "flight"});
         s.generateParenthesis3(3);
-        ListNode l1 = new ListNode(-2);
-        ListNode l2 = new ListNode(-1);
-        ListNode l3 = new ListNode(-1);
-        ListNode l4 = new ListNode(-1);
-        // l1.next = l2;
-        // l2.next = l3;
-        // l3.next = l4;
+        ListNode l1 = new ListNode(1);
+        ListNode l2 = new ListNode(2);
+        ListNode l3 = new ListNode(3);
+        ListNode l4 = new ListNode(4);
+        ListNode l5 = new ListNode(5);
+
+
+        l1.next = l2;
+        l2.next = l3;
+        l3.next = l4;
+        l4.next = l5;
 
         ListNode[] lists = new ListNode[]{null, l2};
 
-        s.mergeKList6(lists);
+        s.swapPairs2(l1);
+        // s.mergeKList6(lists);
         // System.out.println(s.isValid("()[]{}"));
         // System.out.println('[' - ']');
     }

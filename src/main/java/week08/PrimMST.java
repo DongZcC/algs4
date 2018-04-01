@@ -45,7 +45,6 @@ public class PrimMST {
                 continue;  // v-w 失效
             if (e.weight() < distTo[w]) {
                 edgeTo[w] = e;
-
                 distTo[w] = e.weight();
                 if (pq.contains(w))
                     pq.changeKey(w, distTo[w]);
@@ -56,13 +55,17 @@ public class PrimMST {
     }
 
     public Iterable<Edge> edges() {
-        return Arrays.asList(edgeTo);
+        ArrayList<Edge> result = new ArrayList<>();
+        for (int i = 1; i < edgeTo.length; i++)
+            result.add(edgeTo[i]);
+        return result;
     }
 
     public double weight() {
         double total = 0.0;
-        for (double weight : distTo)
-            total += weight;
+        for (int i = 1; i < edgeTo.length; i++) {
+            total += edgeTo[i].weight();
+        }
         return total;
     }
 
