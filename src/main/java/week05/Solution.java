@@ -947,6 +947,146 @@ public class Solution {
         return dummy.next;
     }
 
+
+    public ListNode reverseKGroup(ListNode head, int k) {
+        ListNode curr = head;
+        // 找到当前开始反转的k + 1个节点
+        int count = 0;
+        while (curr != null && count != k) { // find the k+1 node
+            curr = curr.next;
+            count++;
+        }
+        // 找到了可以反转的足够的点
+        if (count == k) {
+            // 寻找是否有下一组
+            curr = reverseKGroup(curr, k);
+            // 这个时候开始反转组内的元素
+            while (count-- > 0) {
+                ListNode tmp = head.next;
+                head.next = curr;
+                curr = head;
+                head = tmp;
+            }
+            head = curr;
+        }
+        return head;
+    }
+
+
+    public int strStr(String haystack, String needle) {
+        return haystack.indexOf(needle);
+    }
+
+
+    public int divide(int dividend, int divisor) {
+        // 如果除数 是0
+        if (divisor == 0)
+            return 0;
+        // 符号位
+        int sign = 1;
+        if ((dividend < 0 && divisor > 0) || (dividend > 0 && divisor < 0)) {
+            sign = -1;
+        }
+
+        // 把除数被除数转成long ，这样如果溢出了，可以正常判断
+        long did = Math.abs((long) dividend);
+        long dior = Math.abs((long) divisor);
+
+        long ans = ldivide(did, dior);
+        int result;
+        if (ans > Integer.MAX_VALUE) {
+            result = (sign == 1) ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+        } else {
+            result = (int) (sign * ans);
+        }
+
+        return result;
+    }
+
+    private long ldivide(long dividend, long divisor) {
+        if (dividend / divisor == 0)
+            return 0;
+        long multi = 1;
+        long sum = divisor;
+        while ((sum + sum) <= dividend) {
+            sum += sum;
+            multi += multi;
+        }
+        return multi + ldivide(dividend - sum, divisor);
+    }
+
+
+    // 30.
+    public List<Integer> findSubstring(String s, String[] words) {
+        // 结果数组
+        List<Integer> indexs = new ArrayList<>();
+        Map<String, Integer> w = new HashMap<>();
+        for (String word : words) {
+            // 放值初始化值，以及每个词语的出现次数
+            w.put(word, w.getOrDefault(word, 0) + 1);
+        }
+        int strLength = s.length(), num = words.length, wordLength = words[0].length();
+        for (int i = 0; i <= strLength - num * wordLength; i++) {
+            Map<String, Integer> seen = new HashMap<>();
+            int j = 0;
+            while (j < num) {
+                String word = s.substring(i + j * wordLength, i + (j + 1) * wordLength);
+                // 有满足条件的就自增
+                if (w.containsKey(word)) {
+                    seen.put(word, seen.getOrDefault(word, 0) + 1);
+                    // 如果出现的次数，超过预定的次数,也属于不满足要求的
+                    if (seen.get(word) > w.get(word)) {
+                        break;
+                    }
+                } else {
+                    // 找不到 ，直接退出这次寻找
+                    break;
+                }
+                j++;
+            }
+
+            // 如果满足条件的，就增加到索引数组中
+            if (j == num) {
+                indexs.add(i);
+            }
+        }
+        return indexs;
+    }
+
+    // 31
+    public void nextPermutation(int[] nums) {
+        if (nums.length <= 1)
+            return ;
+        // 最后一个值
+        int i = nums.length - 1;
+        // 找到第一个需要交换的值
+        for (; i >=1 ; i--) {
+            if (nums[i] > nums[i - 1]) {
+                break;
+            }
+        }
+
+        if (i != 0) {
+            // 交换
+            swap(nums, i - 1);
+        }
+
+        Arrays.sort(nums, i, nums.length);
+
+    }
+    // 找到第一个比需要交换的值大的值进行交换
+    private void swap(int[] nums, int i) {
+        for (int j = nums.length -1;j > i; j--) {
+            if (nums[j] > nums[i]) {
+                int tmp = nums[j];
+                nums[j] = nums[i];
+                nums[i] = tmp;
+                break;
+            }
+        }
+    }
+
+
     public static void main(String[] args) {
         Solution s = new Solution();
         s.fourSum(new int[]{-1, 0, 1, 2, -1, -4}, -1);
@@ -966,7 +1106,11 @@ public class Solution {
 
         ListNode[] lists = new ListNode[]{null, l2};
 
-        s.swapPairs2(l1);
+        s.nextPermutation(new int[]{1,3,2});
+        // s.findSubstring("barfoothefoobarman", new String[]{"foo", "bar"});
+        // s.divide(-2147483648 ,-1);
+        // s.reverseKGroup(l1, 3);
+        // s.strStr("hello", "ll");
         // s.mergeKList6(lists);
         // System.out.println(s.isValid("()[]{}"));
         // System.out.println('[' - ']');

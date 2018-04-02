@@ -5,7 +5,6 @@ import edu.princeton.cs.algs4.IndexMinPQ;
 import edu.princeton.cs.algs4.StdOut;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * 功能说明: Prim's Algorithm eager implementation<br>
