@@ -1,5 +1,14 @@
 package week05;
 
+import edu.princeton.cs.algs4.In;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.*;
 
 /**
@@ -500,6 +509,29 @@ public class Solution {
         return s.substring(rf, rt + 1);
     }
 
+
+    public String longestPalindrome2(String s) {
+        int start = 0, end = 0;
+        for (int i = 0; i < s.length(); i++) {
+            int len1 = expandAroundCenter(s, i, i);
+            int len2 = expandAroundCenter(s, i, i + 1);
+            int len = Math.max(len1, len2);
+            if (len > end - start) {
+                start = i - (len - 1) / 2;
+                end = i + len / 2;
+            }
+        }
+        return s.substring(start, end + 1);
+    }
+
+    private int expandAroundCenter(String s, int left, int right) {
+        int L = left, R = right;
+        while (L >= 0 && R < s.length() && s.charAt(L) == s.charAt(R)) {
+            L--;
+            R++;
+        }
+        return R - L - 1;
+    }
 
     public String convert(String s, int numRows) {
         int len = s.length();
@@ -1056,11 +1088,11 @@ public class Solution {
     // 31
     public void nextPermutation(int[] nums) {
         if (nums.length <= 1)
-            return ;
+            return;
         // 最后一个值
         int i = nums.length - 1;
         // 找到第一个需要交换的值
-        for (; i >=1 ; i--) {
+        for (; i >= 1; i--) {
             if (nums[i] > nums[i - 1]) {
                 break;
             }
@@ -1074,9 +1106,10 @@ public class Solution {
         Arrays.sort(nums, i, nums.length);
 
     }
+
     // 找到第一个比需要交换的值大的值进行交换
     private void swap(int[] nums, int i) {
-        for (int j = nums.length -1;j > i; j--) {
+        for (int j = nums.length - 1; j > i; j--) {
             if (nums[j] > nums[i]) {
                 int tmp = nums[j];
                 nums[j] = nums[i];
@@ -1086,27 +1119,73 @@ public class Solution {
         }
     }
 
+    // 32. brute force  Time Limited
+    public int longestValidParentheses(String s) {
+        int result = 0;
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = i + 1; j < s.length(); j++) {
+                if (isValid2(s.substring(i, j + 1))) {
+                    if (j - i > result) {
+                        result = j - i;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    // 这个函数来判断是否是合法的括号
+    private boolean isValid2(String s) {
+        Stack<Character> st = new Stack<>();
+        for (Character c : s.toCharArray()) {
+            if (c == '(')
+                st.push(')');
+            else if (st.empty() || c != st.pop())
+                return false;
+        }
+        return st.empty();
+    }
+
+
+    // dynamic programming
+    public int longestValidParentheses2(String s) {
+        int maxlen = 0;
+        int[] dp = new int[s.length()];
+        for (int i = 1; i < s.length(); i++) {
+            if (s.charAt(i) == ')') {
+                if (s.charAt(i - 1) == '(') {
+                    dp[i] = (i == 1) ? 2 : dp[i - 2] + 2;
+                } else if (i - dp[i - 1] > 0 && s.charAt(i - dp[i - 1] -1) == '(') {
+                    dp[i] = dp[i - 1] + ((i - dp[i - 1]) >= 2 ? dp[i - dp[i - 1] - 2] : 0) + 2;
+                }
+            }
+            maxlen = Math.max(maxlen, dp[i]);
+        }
+        return maxlen;
+    }
 
     public static void main(String[] args) {
         Solution s = new Solution();
-        s.fourSum(new int[]{-1, 0, 1, 2, -1, -4}, -1);
-        s.longestCommonPrefix(new String[]{"flower", "flow", "flight"});
-        s.generateParenthesis3(3);
-        ListNode l1 = new ListNode(1);
-        ListNode l2 = new ListNode(2);
-        ListNode l3 = new ListNode(3);
-        ListNode l4 = new ListNode(4);
-        ListNode l5 = new ListNode(5);
-
-
-        l1.next = l2;
-        l2.next = l3;
-        l3.next = l4;
-        l4.next = l5;
-
-        ListNode[] lists = new ListNode[]{null, l2};
-
-        s.nextPermutation(new int[]{1,3,2});
+        s.longestValidParentheses2(")(((((()())()()))()(()))(");
+        // s.fourSum(new int[]{-1, 0, 1, 2, -1, -4}, -1);
+        // s.longestCommonPrefix(new String[]{"flower", "flow", "flight"});
+        // s.generateParenthesis3(3);
+        // ListNode l1 = new ListNode(1);
+        // ListNode l2 = new ListNode(2);
+        // ListNode l3 = new ListNode(3);
+        // ListNode l4 = new ListNode(4);
+        // ListNode l5 = new ListNode(5);
+        //
+        //
+        // l1.next = l2;
+        // l2.next = l3;
+        // l3.next = l4;
+        // l4.next = l5;
+        //
+        // ListNode[] lists = new ListNode[]{null, l2};
+        //
+        // s.longestValidParentheses(")))((()))");
+        // s.nextPermutation(new int[]{1,3,2});
         // s.findSubstring("barfoothefoobarman", new String[]{"foo", "bar"});
         // s.divide(-2147483648 ,-1);
         // s.reverseKGroup(l1, 3);
@@ -1114,5 +1193,46 @@ public class Solution {
         // s.mergeKList6(lists);
         // System.out.println(s.isValid("()[]{}"));
         // System.out.println('[' - ']');
+
+        // In in = new In(args[0]);
+        // Map<String, Set<String>> functions = new TreeMap<>();
+        // while (!in.isEmpty()) {
+        //     String functionId = in.readString();
+        //     String key;
+        //     if (functionId.startsWith("HS")) {
+        //         key = functionId.substring(0, 4);
+        //     } else {
+        //         key = functionId.substring(0, 2);
+        //     }
+        //
+        //     if (functions.get(key) == null) {
+        //         Set<String> fs = new TreeSet<>();
+        //         fs.add(functionId);
+        //         functions.put(key, fs);
+        //     } else {
+        //         functions.get(key).add(functionId);
+        //     }
+        // }
+        //
+        // Workbook wb = new HSSFWorkbook();
+        // try {
+        //     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+        //
+        //     for (String key : functions.keySet()) {
+        //         Sheet sheet = wb.createSheet(key);
+        //         Set<String> fs = functions.get(key);
+        //         int index = 1;
+        //         for (String f : fs) {
+        //             Row row = sheet.createRow(index++);
+        //             Cell cell = row.createCell(1);
+        //             cell.setCellValue(f);
+        //         }
+        //     }
+        //     wb.write(fileOut);
+        //     fileOut.close();
+        // } catch (Exception e) {
+        //
+        // }
+
     }
 }
