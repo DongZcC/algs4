@@ -1,5 +1,7 @@
 package week07;
 
+import edu.princeton.cs.algs4.EdgeWeightedDigraph;
+import edu.princeton.cs.algs4.EdgeWeightedDirectedCycle;
 import edu.princeton.cs.algs4.StdOut;
 
 /**
@@ -20,6 +22,11 @@ public class Topological {
             // order = dfs.pre();
             // order = dfs.post();
         }
+    }
+
+
+    public Topological(EdgeWeightedDigraph G) {
+        EdgeWeightedDirectedCycle finder = new EdgeWeightedDirectedCycle(G);
     }
 
     public boolean isDAG() {

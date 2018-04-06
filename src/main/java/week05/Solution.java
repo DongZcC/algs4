@@ -1167,6 +1167,8 @@ public class Solution {
     public static void main(String[] args) {
         Solution s = new Solution();
         s.longestValidParentheses2(")(((((()())()()))()(()))(");
+
+        System.out.println(-Math.log(0.741) - Math.log(1.366) - Math.log(0.995));
         // s.fourSum(new int[]{-1, 0, 1, 2, -1, -4}, -1);
         // s.longestCommonPrefix(new String[]{"flower", "flow", "flight"});
         // s.generateParenthesis3(3);
