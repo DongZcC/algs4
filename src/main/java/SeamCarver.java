@@ -43,7 +43,13 @@ public class SeamCarver {
 
     // current picture
     public Picture picture() {
-        return null;
+        Picture picture = new Picture(width, height);
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                picture.setRGB(i, j, this.picture[i][j]);
+            }
+        }
+        return picture;
     }
 
     // width of current picture
@@ -73,7 +79,10 @@ public class SeamCarver {
 
     // sequence of indices for horizontal seam
     public int[] findHorizontalSeam() {
-        return null;
+        transpose();
+        int[] result = findVerticalSeam();
+        transpose();
+        return result;
     }
 
     // sequence of indices for vertical seam
@@ -102,12 +111,10 @@ public class SeamCarver {
 
         // 最终的距离得到
         double min = Double.POSITIVE_INFINITY;
-        int minIndex = 0;
         for (int i = 0; i < width; i++) {
-            if (Double.compare(min, disTo[i][height - 1]) < 0) {
+            if (Double.compare(disTo[i][height - 1], min) < 0) {
                 seam[height - 1] = i;
                 min = disTo[i][height - 1];
-                minIndex = i;
             }
         }
 
@@ -134,6 +141,27 @@ public class SeamCarver {
         }
     }
 
+
+    // 矩阵置换
+    private void transpose() {
+        int temp = width;
+        width = height;
+        height = temp;
+
+        double[][] transEnergy = new double[width][height];
+        int[][] transPic = new int[width][height];
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                transEnergy[i][j] = energy[j][i];
+                transPic[i][j] = picture[j][i];
+            }
+        }
+
+        energy = transEnergy;
+        picture = transPic;
+    }
+
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
         if (seam == null || seam.length != width())
@@ -143,6 +171,19 @@ public class SeamCarver {
                 throw new IllegalArgumentException("The pixel out of range");
         }
 
+        for (int i = 0; i < width; i++) {
+            System.arraycopy(energy[i], seam[i] + 1, energy[i], seam[i], energy[i].length - seam[i] - 1);
+            System.arraycopy(picture[i], seam[i] + 1, picture[i], seam[i], picture[i].length - seam[i] - 1);
+        }
+
+        this.height--;
+//        for (int y = 0; y < height; y++) {
+//            for (int x = 0; x < width; x++) {
+//                System.out.printf("%9.2f ,", energy[x][y]);
+//            }
+//            System.out.println();
+//        }
+//        System.out.println("--------");
     }
 
     // remove vertical seam from current picture
@@ -153,6 +194,9 @@ public class SeamCarver {
             if (i < 0 || i >= width())
                 throw new IllegalArgumentException("The pixel out of range");
         }
+        transpose();
+        removeHorizontalSeam(seam);
+        transpose();
     }
 
     private double computeXGradientEnergy(int x, int y) {
