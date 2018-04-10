@@ -1150,7 +1150,7 @@ public class Solution {
             if (s.charAt(i) == ')') {
                 if (s.charAt(i - 1) == '(') {
                     dp[i] = (i == 1) ? 2 : dp[i - 2] + 2;
-                } else if (i - dp[i - 1] > 0 && s.charAt(i - dp[i - 1] -1) == '(') {
+                } else if (i - dp[i - 1] > 0 && s.charAt(i - dp[i - 1] - 1) == '(') {
                     dp[i] = dp[i - 1] + ((i - dp[i - 1]) >= 2 ? dp[i - dp[i - 1] - 2] : 0) + 2;
                 }
             }
@@ -1159,77 +1159,231 @@ public class Solution {
         return maxlen;
     }
 
+
+    // 37.
+    public void solveSudoku(char[][] board) {
+        if (board == null || board.length == 0)
+            return;
+        solve(board);
+    }
+
+    public boolean solve(char[][] board) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (board[i][j] == '.') {
+                    for (char c = '1'; c <= '9'; c++) {//trial. Try 1 through 9
+                        if (isValid(board, i, j, c)) {
+                            board[i][j] = c; //Put c for this cell
+
+                            if (solve(board))
+                                return true; //If it's the solution return true
+                            else
+                                board[i][j] = '.'; //Otherwise go back
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean isValid(char[][] board, int row, int col, char c) {
+        for (int i = 0; i < 9; i++) {
+            if (board[i][col] != '.' && board[i][col] == c) return false; //check row
+            if (board[row][i] != '.' && board[row][i] == c) return false; //check column
+            if (board[3 * (row / 3) + i / 3][3 * (col / 3) + i % 3] != '.' &&
+                    board[3 * (row / 3) + i / 3][3 * (col / 3) + i % 3] == c) return false; //check 3*3 block
+        }
+        return true;
+    }
+
+    public boolean isValidSudoku(char[][] board) {
+        // 一重循环
+        for (int i = 0; i < board.length; i++) {
+            HashSet<Character> rows = new HashSet<>();
+            HashSet<Character> cols = new HashSet<>();
+            HashSet<Character> boxs = new HashSet<>();
+            for (int j = 0; j < board.length; j++) {
+                // 加入行
+                if (board[i][j] != '.' && !rows.add(board[i][j]))
+                    return false;
+                // 加入列
+                if (board[j][i] != '.' && !cols.add(board[j][i]))
+                    return false;
+
+                // 加入boxs ,因为每次循环都是 9次，所以一次就找到一个box
+                int RowIndex = 3 * (i / 3);
+                int ColIndex = 3 * (i % 3);
+                if (board[RowIndex + j / 3][ColIndex + j % 3] != '.' && !boxs.add(board[RowIndex + j / 3][ColIndex + j % 3]))
+                    return false;
+
+            }
+        }
+        return true;
+    }
+
+
+    public String countAndSay(int n) {
+        // 当 n = 1时,直接返回 1
+        if (n <= 1)
+            return "1";
+
+        // n > 1 ; n = 2
+        String result = countAndSay(n - 1);
+        Map<Character, Integer> count = new TreeMap<>();
+        for (int i = 0; i < result.length(); i++) {
+            Character key = result.charAt(i);
+            if (count.containsKey(key)) {
+                count.put(key, 1);
+            } else {
+                count.put(key, count.get(key) + 1);
+            }
+        }
+
+        String r = "";
+        for (Character key : count.keySet()) {
+            r = "" + count.get(key) + key;
+        }
+        return r;
+    }
+
+    // 39.
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> results = new ArrayList<>();
+        List<Integer> result = new ArrayList<Integer>();
+        // combination(candidates, target, 0, result, results);
+        combination(results, result, candidates, target, 0);
+        return results;
+    }
+
+
+    private void combination(List<List<Integer>> list, List<Integer> tempList, int[] candidates, int remain, int start) {
+        if (remain == 0)
+            list.add(new ArrayList<>(tempList));
+        else if (remain > 0) {
+            for (int i = start; i < candidates.length; i++) {
+                tempList.add(candidates[i]);
+                combination(list, tempList, candidates, remain - candidates[i], i);
+                tempList.remove(tempList.size() - 1);
+            }
+        }
+    }
+
+    // 40.
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        List<List<Integer>> results = new ArrayList<>();
+        List<Integer> tempList = new ArrayList<>();
+        Arrays.sort(candidates);
+        backtrack(results, tempList, candidates, target, 0);
+        return results;
+    }
+
+
+    private void backtrack(List<List<Integer>> result, List<Integer> tempList, int[] candidates, int remain, int start) {
+        if (remain == 0)
+            result.add(new ArrayList<>(tempList));
+        else if (remain > 0) {
+            for (int i = start; i < candidates.length; i++) {
+                if (i > start && candidates[i] == candidates[i - 1]) continue;
+                tempList.add(candidates[i]);
+                backtrack(result, tempList, candidates, remain - candidates[i], i + 1);
+                tempList.remove(tempList.size() - 1);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         Solution s = new Solution();
-        s.longestValidParentheses2(")(((((()())()()))()(()))(");
-
-        System.out.println(-Math.log(0.741) - Math.log(1.366) - Math.log(0.995));
-        // s.fourSum(new int[]{-1, 0, 1, 2, -1, -4}, -1);
-        // s.longestCommonPrefix(new String[]{"flower", "flow", "flight"});
-        // s.generateParenthesis3(3);
-        // ListNode l1 = new ListNode(1);
-        // ListNode l2 = new ListNode(2);
-        // ListNode l3 = new ListNode(3);
-        // ListNode l4 = new ListNode(4);
-        // ListNode l5 = new ListNode(5);
-        //
-        //
-        // l1.next = l2;
-        // l2.next = l3;
-        // l3.next = l4;
-        // l4.next = l5;
-        //
-        // ListNode[] lists = new ListNode[]{null, l2};
-        //
-        // s.longestValidParentheses(")))((()))");
-        // s.nextPermutation(new int[]{1,3,2});
-        // s.findSubstring("barfoothefoobarman", new String[]{"foo", "bar"});
-        // s.divide(-2147483648 ,-1);
-        // s.reverseKGroup(l1, 3);
-        // s.strStr("hello", "ll");
-        // s.mergeKList6(lists);
-        // System.out.println(s.isValid("()[]{}"));
-        // System.out.println('[' - ']');
-
-        // In in = new In(args[0]);
-        // Map<String, Set<String>> functions = new TreeMap<>();
-        // while (!in.isEmpty()) {
-        //     String functionId = in.readString();
-        //     String key;
-        //     if (functionId.startsWith("HS")) {
-        //         key = functionId.substring(0, 4);
-        //     } else {
-        //         key = functionId.substring(0, 2);
-        //     }
-        //
-        //     if (functions.get(key) == null) {
-        //         Set<String> fs = new TreeSet<>();
-        //         fs.add(functionId);
-        //         functions.put(key, fs);
-        //     } else {
-        //         functions.get(key).add(functionId);
-        //     }
-        // }
-        //
-        // Workbook wb = new HSSFWorkbook();
-        // try {
-        //     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-        //
-        //     for (String key : functions.keySet()) {
-        //         Sheet sheet = wb.createSheet(key);
-        //         Set<String> fs = functions.get(key);
-        //         int index = 1;
-        //         for (String f : fs) {
-        //             Row row = sheet.createRow(index++);
-        //             Cell cell = row.createCell(1);
-        //             cell.setCellValue(f);
-        //         }
-        //     }
-        //     wb.write(fileOut);
-        //     fileOut.close();
-        // } catch (Exception e) {
-        //
-        // }
-
+        s.combinationSum2(new int[]{10, 1, 2, 7, 6, 1, 5}, 8);
     }
+
+    // Solution s = new Solution();
+    //     s.longestValidParentheses2(")(((((()())()()))()(()))(");
+    //
+    //     System.out.println(-Math.log(0.741) - Math.log(1.366) - Math.log(0.995));
+    // char[][] t = new char[][]{
+    //         {'.', '.', '9', '7', '4', '8', '.', '.', '.'},
+    //         {'7', '.', '.', '.', '.', '.', '.', '.', '.'},
+    //         {'.', '2', '.', '1', '.', '9', '.', '.', '.'},
+    //         {'.', '.', '7', '.', '.', '.', '2', '4', '.'},
+    //         {'.', '6', '4', '.', '1', '.', '5', '9', '.'},
+    //         {'.', '9', '8', '.', '.', '.', '3', '.', '.'},
+    //         {'.', '.', '.', '8', '.', '3', '.', '2', '.'},
+    //         {'.', '.', '.', '.', '.', '.', '.', '.', '6'},
+    //         {'.', '.', '.', '2', '7', '5', '9', '.', '.'}};
+    //
+    //     s.solveSudoku(t);
+    //     for (int i = 0; i < t.length; i++) {
+    //     System.out.println(Arrays.toString(t[i]));
+    // }
+    //     System.out.println(s.isValidSudoku(t));
+    // ;
+    // s.fourSum(new int[]{-1, 0, 1, 2, -1, -4}, -1);
+    // s.longestCommonPrefix(new String[]{"flower", "flow", "flight"});
+    // s.generateParenthesis3(3);
+    // ListNode l1 = new ListNode(1);
+    // ListNode l2 = new ListNode(2);
+    // ListNode l3 = new ListNode(3);
+    // ListNode l4 = new ListNode(4);
+    // ListNode l5 = new ListNode(5);
+    //
+    //
+    // l1.next = l2;
+    // l2.next = l3;
+    // l3.next = l4;
+    // l4.next = l5;
+    //
+    // ListNode[] lists = new ListNode[]{null, l2};
+    //
+    // s.longestValidParentheses(")))((()))");
+    // s.nextPermutation(new int[]{1,3,2});
+    // s.findSubstring("barfoothefoobarman", new String[]{"foo", "bar"});
+    // s.divide(-2147483648 ,-1);
+    // s.reverseKGroup(l1, 3);
+    // s.strStr("hello", "ll");
+    // s.mergeKList6(lists);
+    // System.out.println(s.isValid("()[]{}"));
+    // System.out.println('[' - ']');
+
+    // In in = new In(args[0]);
+    // Map<String, Set<String>> functions = new TreeMap<>();
+    // while (!in.isEmpty()) {
+    //     String functionId = in.readString();
+    //     String key;
+    //     if (functionId.startsWith("HS")) {
+    //         key = functionId.substring(0, 4);
+    //     } else {
+    //         key = functionId.substring(0, 2);
+    //     }
+    //
+    //     if (functions.get(key) == null) {
+    //         Set<String> fs = new TreeSet<>();
+    //         fs.add(functionId);
+    //         functions.put(key, fs);
+    //     } else {
+    //         functions.get(key).add(functionId);
+    //     }
+    // }
+    //
+    // Workbook wb = new HSSFWorkbook();
+    // try {
+    //     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+    //
+    //     for (String key : functions.keySet()) {
+    //         Sheet sheet = wb.createSheet(key);
+    //         Set<String> fs = functions.get(key);
+    //         int index = 1;
+    //         for (String f : fs) {
+    //             Row row = sheet.createRow(index++);
+    //             Cell cell = row.createCell(1);
+    //             cell.setCellValue(f);
+    //         }
+    //     }
+    //     wb.write(fileOut);
+    //     fileOut.close();
+    // } catch (Exception e) {
+    //
+    // }
+
 }
