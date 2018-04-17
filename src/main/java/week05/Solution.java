@@ -1293,9 +1293,87 @@ public class Solution {
         }
     }
 
+    public int firstMissingPositive(int[] A) {
+        int n = A.length;
+        if (n == 0)
+            return 1;
+        int k = partition(A) + 1;
+        int temp = 0;
+        int first_missing_Index = k;
+        for (int i = 0; i < k; i++) {
+            temp = Math.abs(A[i]);
+            if (temp <= k)
+                A[temp - 1] = (A[temp - 1] < 0) ? A[temp - 1] : -A[temp - 1];
+        }
+        for (int i = 0; i < k; i++) {
+            if (A[i] > 0) {
+                first_missing_Index = i;
+                break;
+            }
+        }
+        return first_missing_Index + 1;
+    }
+
+    public int partition(int[] A) {
+        int n = A.length;
+        int q = -1;
+        for (int i = 0; i < n; i++) {
+            if (A[i] > 0) {
+                q++;
+                swap(A, q, i);
+            }
+        }
+        return q;
+    }
+
+    public void swap(int[] A, int i, int j) {
+        if (i != j) {
+            int temp = A[i];
+            A[i] = A[j];
+            A[j] = temp;
+        }
+    }
+
+    public int trap(int[] height) {
+        // 循环每一个位置，找到该位置的菜单最小值
+        int size = height.length;
+        int ans = 0;
+        for (int i = 1; i < size - 1; i++) {
+            int max_left = 0, max_right = 0;
+            for (int j = i; j >= 0; j--) { //Search the left part for max bar size
+                max_left = Math.max(max_left, height[j]);
+            }
+            for (int j = i; j < size; j++) { //Search the right part for max bar size
+                max_right = Math.max(max_right, height[j]);
+            }
+            ans += Math.min(max_left, max_right) - height[i];
+        }
+        return ans;
+    }
+
+    // 43.
+    public String multiply(String num1, String num2) {
+        int m = num1.length(), n = num2.length();
+        int[] pos = new int[m + n];
+
+        for (int i = m - 1; i >= 0; i--) {
+            for (int j = n - 1; j >= 0; j--) {
+                int multi = (num1.charAt(i) - '0') * (num2.charAt(j) - '0');
+                int p1 = i + j , p2 = i + j + 1; // ???
+                int sum = multi + pos[p2];
+
+                pos[p1] += sum / 10;
+                pos[p2] = (sum) % 10;
+            }
+        }
+        return "";
+    }
+
+
     public static void main(String[] args) {
         Solution s = new Solution();
-        s.combinationSum2(new int[]{10, 1, 2, 7, 6, 1, 5}, 8);
+        s.multiply("123", "45");
+        System.out.println(s.trap(new int[]{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1}));
     }
 
     // Solution s = new Solution();
