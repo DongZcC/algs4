@@ -1373,7 +1373,13 @@ public class Solution {
     public static void main(String[] args) {
         Solution s = new Solution();
         s.multiply("123", "45");
-        System.out.println(s.trap(new int[]{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1}));
+
+        int i = 0;
+        int j = 1;
+        if (i != 0 || i == 0 && j == 2)
+            System.out.println("test");
+
+        // System.out.println(s.trap(new int[]{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1}));
     }
 
     // Solution s = new Solution();
